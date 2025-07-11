@@ -5,6 +5,7 @@ export const protect = async (req, res, next) => {
   if (auth && auth.split(" ")[0] == "Bearer") {
     try {
       const token = auth.split(" ")[1];
+      console.log("protect token :: ",token);
       const verify = jwt.verify(token, process.env.JWT_SECRET);
       req.userId = verify._id;
       next();
