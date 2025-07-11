@@ -33,9 +33,9 @@ export const login = async (req, res) => {
       });
 
       res.cookie("chattoken", token, {
-        httpOnly: false,
-        secure: false,
-        sameSite: "lax",
+        httpOnly: true,
+        secure: ture,
+        sameSite: "None",
         path: "/",
         maxAge: 24 * 60 * 60 * 1000,
       });
