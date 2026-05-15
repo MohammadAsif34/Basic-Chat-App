@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import User from "../models/User.model.js";
-import Chat from "../models/chat.model.js";
+import Chat from "../models/Chat.model.js";
 
 // done -> get me
 export const get_me = async (req, res) => {
