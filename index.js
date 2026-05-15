@@ -20,12 +20,17 @@ const server = http.createServer(app);
 const io = new Server(server, { cors: corsOptions });
 
 socketInitilize(io); // Socket Initilization
-app.use(cors(corsOptions)); // Cors Integration
+// app.use(cors(corsOptions)); // Cors Integration
 app.use(express.json()); // Json Integration
 
+app.use(
+  cors({
+    origin: "https://mohammadasif34-chatapp.vercel.app",
+    credentials: true,
+  }),
+);
 // Database Initilization
 connectDB();
-
 // test route
 app.get("/", (req, res) => {
   console.log("SYSTEM_CHECK");
