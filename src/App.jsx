@@ -16,6 +16,7 @@ import { useState } from "react";
 import { systemChange } from "./services/slice/authSlice";
 import { Loader } from "./components/ui/Loader";
 import { useDispatch } from "react-redux";
+import ServerError from "./pages/invalid-page/ServerError";
 
 const ProtectedRoute = () => {
   const { token } = useAuth();
@@ -40,6 +41,7 @@ const App = () => {
         console.log(data.message);
         dispatch(systemChange(true));
       } catch (err) {
+        console.log("SYSTEM_FAILURE...");
         console.error(err.response?.data?.message || err?.message);
       } finally {
         setLoading(false);
@@ -49,7 +51,7 @@ const App = () => {
   }, []);
   const { system } = useAuth();
   if (loading) return <Loader />;
-  if (!system && !loading) return <p>Server Failed</p>;
+  if (!system && !loading) return <ServerError />;
   return (
     <>
       <BrowserRouter>
