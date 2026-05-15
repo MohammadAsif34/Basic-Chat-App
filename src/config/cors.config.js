@@ -6,9 +6,10 @@ const allowedOrigins = [
 ];
 export const corsOptions = {
   origin: (origin, callback) => {
-    if (!origin) return callback(null, true);
+    console.log(process.env.CLIENT_URL);
+    if (!origin || origin.includes("vercel.app")) return callback(null, true);
 
-    if (allowedOrigins.includes(origin)) return callback(null, true);
+    // if (allowedOrigins.includes(origin)) return callback(null, true);
 
     return callback(new Error("Not allowed by CORS"));
   },

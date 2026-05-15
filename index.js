@@ -20,17 +20,11 @@ const server = http.createServer(app);
 const io = new Server(server, { cors: corsOptions });
 
 socketInitilize(io); // Socket Initilization
-// app.use(cors(corsOptions)); // Cors Integration
+app.use(cors(corsOptions)); // Cors Integration
 app.use(express.json()); // Json Integration
 
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 // Database Initilization
 connectDB();
-
-// mongoose
-//   .connect("mongodb+srv://asif_db:asif_db@asifdb.93hrm.mongodb.net/")
-//   .then((res) => console.log(res))
-//   .catch((err) => console.log(err));
 
 // test route
 app.get("/", (req, res) => {
