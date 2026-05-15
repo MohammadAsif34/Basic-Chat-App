@@ -47,10 +47,6 @@ const HomePage = () => {
   const { currentState } = useCurrentState();
 
   const isMobile = useResponsiveLayout();
-  console.log("ENV");
-  console.log("1:", import.meta.env.VITE_GOOGLE_CLIENT_ID);
-  console.log("2:", import.meta.env.VITE_URL);
-
   return (
     <>
       {isMobile ? (

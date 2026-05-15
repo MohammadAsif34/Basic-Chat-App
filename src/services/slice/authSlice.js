@@ -1,10 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 const token = localStorage.getItem("token");
-console.log("token", token);
 
 const initialState = {
   token: token || null,
   authenticated: !!token,
+  system: false,
 };
 
 const authSlice = createSlice({
@@ -21,8 +21,11 @@ const authSlice = createSlice({
       state.token = null;
       localStorage.removeItem("token");
     },
+    systemChange: (state, action) => {
+      state.system = action.payload;
+    },
   },
 });
 
-export const { setCredentials, logout } = authSlice.actions;
+export const { setCredentials, logout, systemChange } = authSlice.actions;
 export default authSlice.reducer;

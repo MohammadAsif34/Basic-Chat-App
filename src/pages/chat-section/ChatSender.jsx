@@ -11,11 +11,12 @@ import {
   addMessage,
   replaceTempMessage,
 } from "../../services/slice/currentChatSlice";
+import { encryptMessage } from "../../services/utils/crypto.js";
 // import { addMessage, replaceTempMessage } from "./currentChatSlice";
 
 export const ChatSender = () => {
   const { token } = useAuth();
-  const [message, setMessage] = useState("");
+  const [msg, setMsg] = useState("");
 
   const dispatch = useDispatch();
 
@@ -25,8 +26,6 @@ export const ChatSender = () => {
   // receive message from socket
   useEffect(() => {
     socket.on("message_received", (msg) => {
-      console.log("msg-receive:", msg);
-      // dispatch(replaceTempMessage(msg));
       dispatch(addMessage(msg));
     });
 
@@ -38,31 +37,16 @@ export const ChatSender = () => {
   const handleSend = async (e) => {
     e.preventDefault();
 
-    if (!message.trim()) return;
+    if (!msg.trim()) return;
 
     try {
-      // temporary optimistic message
-      const tempMessage = {
-        _id: Date.now().toString(),
-        tempId: Date.now().toString(),
-        chatId: currentChat.chatId,
-        sender: user._id,
-        message,
-        pending: true,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-
-      //   dispatch(addMessage(tempMessage));
-
+      const message = encryptMessage(msg);
       socket.emit("send_message", {
         chatId: currentChat.chatId,
         sender: user._id,
         message,
-        tempId: tempMessage.tempId,
       });
-
-      setMessage("");
+      setMsg("");
     } catch (err) {
       console.error(err.message);
     }
@@ -77,8 +61,8 @@ export const ChatSender = () => {
       <div className="flex-1 h-12 border border-blue-400 bg-white rounded-2xl">
         <input
           type="text"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          value={msg}
+          onChange={(e) => setMsg(e.target.value)}
           className="w-full h-full max-h-20 outline-0 px-4 resize-none scrollbar-track-transparent"
         />
       </div>
