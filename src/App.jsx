@@ -29,29 +29,29 @@ const PublicRoute = () => {
   return <Outlet />;
 };
 const App = () => {
-  console.log("SYSTEM_CHECK");
-  const dispatch = useDispatch();
-  const [loading, setLoading] = useState(false);
+  // console.log("SYSTEM_CHECK");
+  // const dispatch = useDispatch();
+  // const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const systemCheck = async () => {
-      setLoading(true);
-      try {
-        const { data } = await baseApi.backendCheck();
-        console.log(data.message);
-        dispatch(systemChange(true));
-      } catch (err) {
-        console.log("SYSTEM_FAILURE...");
-        console.error(err.response?.data?.message || err?.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    systemCheck();
-  }, []);
-  const { system } = useAuth();
-  if (loading) return <Loader />;
-  if (!system && !loading) return <ServerError />;
+  // useEffect(() => {
+  //   const systemCheck = async () => {
+  //     setLoading(true);
+  //     try {
+  //       const { data } = await baseApi.backendCheck();
+  //       console.log(data.message);
+  //       dispatch(systemChange(true));
+  //     } catch (err) {
+  //       console.log("SYSTEM_FAILURE...");
+  //       console.error(err.response?.data?.message || err?.message);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   systemCheck();
+  // }, []);
+  // const { system } = useAuth();
+  // if (loading) return <Loader />;
+  // if (!system && !loading) return <ServerError />;
   return (
     <>
       <BrowserRouter>

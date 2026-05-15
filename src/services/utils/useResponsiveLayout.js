@@ -1,27 +1,20 @@
 import { useEffect, useState } from "react";
 
 function useResponsiveLayout() {
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(
+    () => window.matchMedia("(max-width: 767px)").matches,
+  );
 
   useEffect(() => {
-    const checkScreenSize = () => {
-      // Tablet range example: 768px to 1024px
-      setIsMobile(window.innerWidth <= 768);
-    };
+    const media = window.matchMedia("(max-width: 767px)");
 
-    // Initial check
-    checkScreenSize();
+    const handler = (e) => setIsMobile(e.matches);
 
-    // Listen for resize
-    window.addEventListener("resize", checkScreenSize);
+    media.addEventListener("change", handler);
 
-    // Cleanup
-    return () => {
-      window.removeEventListener("resize", checkScreenSize);
-    };
+    return () => media.removeEventListener("change", handler);
   }, []);
 
   return isMobile;
 }
-
 export default useResponsiveLayout;

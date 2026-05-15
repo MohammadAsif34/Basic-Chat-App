@@ -14,7 +14,7 @@ const SideSection = () => {
   const { currentState } = useCurrentState();
   return (
     <>
-      <section className="flex min-w-lg:border w-120 ">
+      <section className="flex min-w-lg:border sm:w-100 md:w-120 lg:w-150 ">
         <Sidebar />
 
         <div className="w-md min-w-sm max-w-md">

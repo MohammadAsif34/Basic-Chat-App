@@ -10,4 +10,5 @@ export const userAPI = {
   updatePassword: (payload) => apiClient.put("/api/user/password", payload),
 
   chatFetch: (chatId) => apiClient.get(`/api/user/messages/${chatId}`),
+  chatDelete: (chatId) => apiClient.delete(`api/user/${chatId}`),
 };

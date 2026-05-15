@@ -1,21 +1,48 @@
-export const Loader = ({ label = "" }) => {
+export const Loader = ({ label = "Loading..." }) => {
   return (
-    <>
-      <div className="w-screen h-screen absolute top-0 left-0 bg-black/50 flex flex-col gap-2 justify-center items-center z-10">
-        <div className="w-10 h-10 border-4 border-slate-300 border-t-transparent rounded-full animate-spin"></div>
-        <p className="text-white capitalize">{label}</p>
-      </div>
-    </>
+    <div
+      className="
+      fixed inset-0 z-50
+      flex flex-col items-center justify-center gap-3
+      bg-black/60 backdrop-blur-md
+    "
+    >
+      {/* glow spinner */}
+      <div
+        className="
+        w-12 h-12 rounded-full
+        border-4 border-white/10
+        border-t-cyan-400
+        animate-spin
+        shadow-[0_0_20px_rgba(34,211,238,0.3)]
+      "
+      />
+
+      {/* label */}
+      <p className="text-white/70 text-sm tracking-wide">{label}</p>
+    </div>
   );
 };
 
-export const Loader2 = ({ label = "" }) => {
+export const Loader2 = ({ label = "Loading..." }) => {
   return (
-    <>
-      <div className="w-full h-full absolute top-0 left-0 text-slate-600 flex flex-col gap-2 justify-center items-center">
-        <div className="w-10 h-10 border-4 border-slate-300 border-t-transparent rounded-full animate-spin"></div>
-        <p className=" capitalize">{label}</p>
-      </div>
-    </>
+    <div
+      className="
+      w-full h-full
+      flex flex-col items-center justify-center gap-2
+      text-white/50
+    "
+    >
+      <div
+        className="
+        w-8 h-8 rounded-full
+        border-3 border-white/10
+        border-t-cyan-400
+        animate-spin
+      "
+      />
+
+      <p className="text-xs">{label}</p>
+    </div>
   );
 };

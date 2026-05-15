@@ -4,28 +4,35 @@ import axios from "axios";
 import { useAuth, useUser } from "../../services/hooks/CustomHooks";
 import { userAPI } from "../../services/api/userAPI";
 import { setCurrentState } from "../../services/slice/currentStateSlice";
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
+import { sentRequest } from "../../services/slice/userSlice";
+import { socket } from "../../services/utils/socket";
 
 export const AddContact = () => {
   const [id, setId] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const [list, SetList] = useState(null);
+  const [list, setList] = useState(null);
 
-  console.log(list);
+  const dispatch = useDispatch();
+
   const search = async (e) => {
     e.preventDefault();
     try {
       setLoading(true);
       if (id.length <= 3) {
-        setMessage("invalid search");
+        setMessage("Enter valid email or id");
         return;
       }
       const { data } = await userAPI.searchUser(id);
-      console.log(data);
       if (data.success) {
-        SetList(data.data);
+        setList(data.data);
         setMessage("");
-      } else setMessage(data.message);
+      } else {
+        setMessage(data.message);
+        setList(null);
+      }
     } catch (error) {
       console.error(error.message);
     } finally {
@@ -34,117 +41,146 @@ export const AddContact = () => {
   };
 
   return (
-    <div>
+    <div className="h-full bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
       <HeaderBack label={"Add Contact"} />
 
-      <form action="" className="px-4 flex flex-wrap gap-4" onSubmit={search}>
+      {/* Search Box */}
+      <form onSubmit={search} className="px-4 pt-4 flex gap-3">
         <input
-          type="text"
-          name="id"
-          id="id"
           value={id}
           onChange={(e) => setId(e.target.value)}
-          className="w-full h-12 px-4 border border-gray-300 rounded-xl bg-slate-100 outline-0 "
-          placeholder="email..."
+          placeholder="Search by email or id..."
+          className="
+            flex-1 h-11 px-4 rounded-xl
+            bg-white/5 border border-white/10
+            text-white placeholder:text-white/30
+            outline-none
+            focus:border-cyan-400/40
+            focus:shadow-[0_0_15px_rgba(34,211,238,0.2)]
+            transition
+          "
         />
-        <button
-          type="button"
-          onClick={() => setCurrentState("contact")}
-          className="grow h-10  border border-gray-300  rounded-xl"
-        >
-          Cancel
-        </button>
+
         <button
           type="submit"
-          className="w-2/3 h-10  text-white bg-slate-400  rounded-xl"
+          className="
+            px-4 h-11 rounded-xl
+            bg-gradient-to-r from-cyan-500 to-blue-500
+            text-white font-medium
+            hover:shadow-[0_0_15px_rgba(34,211,238,0.4)]
+            active:scale-95
+            transition
+          "
         >
-          Add Contact
+          Search
         </button>
       </form>
-      <div className="px-4 py-4 w-full h-full overflow-y-auto ">
-        {loading ? (
-          <div className="py-4 mt-8 text-center text-slate-500">
-            <span className="inline-block w-8 h-8 border-4 border-slate-600 border-t-transparent rounded-full animate-spin"></span>
-            <br />
-            <p>searching</p>
+
+      {/* Body */}
+      <div className="px-4 py-5">
+        {/* Loading */}
+        {loading && (
+          <div className="text-center text-white/50 mt-10">
+            <div className="w-8 h-8 mx-auto border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+            <p className="mt-2 text-sm">Searching...</p>
           </div>
-        ) : message != "" ? (
-          <div className="mt-8">
-            <img
-              src="/default/avatar.png"
-              alt=""
-              className="w-32 mx-auto opacity-45"
-            />
-            <p className="text-center text-sm capitalize text-slate-400">
-              {message}
-            </p>
+        )}
+
+        {/* Message */}
+        {!loading && message && (
+          <div className="text-center text-white/40 mt-10">
+            <p className="text-sm">{message}</p>
           </div>
-        ) : (
-          list && (
-            <div>
-              {list.map((i, idx) => (
-                <UserCard key={idx} info={i} />
-              ))}
-            </div>
-          )
+        )}
+
+        {/* Results */}
+        {!loading && list && (
+          <div className="space-y-3 mt-4">
+            {list.map((i, idx) => (
+              <UserCard key={idx} info={i} />
+            ))}
+          </div>
         )}
       </div>
     </div>
   );
 };
-
 const UserCard = ({ info }) => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
-  const { token } = useAuth();
+
   const { user } = useUser();
+  const dispatch = useDispatch();
 
   const sendRequest = async (e) => {
     e.preventDefault();
     try {
       setLoading(true);
+      console.log(info);
+      socket.emit("send_friend_request", {
+        senderId: user._id,
+        receiverId: info._id,
+      });
       const { data } = await userAPI.sendRequest(info._id);
-      console.log(data);
       if (data.success) {
-        if (data.message) {
-          return setMessage(data.message);
-        }
-        setMessage(null);
+        setMessage("Sent");
+        dispatch(sentRequest(info));
+        toast.success(data.message);
+      } else {
+        setMessage(data.message);
       }
-    } catch (error) {
-      console.error(error.message);
+    } catch (err) {
+      console.error(err.message);
     } finally {
       setLoading(false);
     }
   };
+
+  const isSelf = user?.email === info.email;
+
   return (
-    <>
-      <div className="px-4 py-2 bg-slate-100 rounded-xl flex justify-between items-center">
-        <div className="flex-1 flex items-center gap-2">
-          <img
-            src={info?.picture || "/default/avatar.png"}
-            alt=""
-            className="w-16 h-16 rounded-xl overflow-hidden bg-cover bg-center"
-          />
-          <div>
-            <p className="  text-xl font-semibold text-slate-500 truncate text-wrap line-clamp-1">
-              {info.name}
-            </p>
-            <p className="text-sm text-slate-400">{info.email}</p>
-          </div>
+    <div
+      className="
+      flex items-center justify-between
+      px-3 py-3 rounded-xl
+      bg-white/5 border border-white/10
+      hover:border-cyan-400/30
+      hover:shadow-[0_0_15px_rgba(34,211,238,0.15)]
+      transition
+    "
+    >
+      {/* Info */}
+      <div className="flex items-center gap-3 min-w-0">
+        <img
+          src={info?.picture || "/default/avatar.png"}
+          className="w-12 h-12 rounded-xl object-cover border border-white/10"
+        />
+
+        <div className="min-w-0">
+          <p className="text-white font-medium truncate">{info.name}</p>
+          <p className="text-xs text-white/40 truncate">{info.email}</p>
         </div>
-        {user.email == info.email ? (
-          ""
-        ) : (
-          <button
-            onClick={sendRequest}
-            className="float-end px-4 py-2 bg-slate-500 text-white rounded-xl disabled:cursor-not-allowed"
-            disabled={false}
-          >
-            {loading ? "sending..." : message ? message : "send"}
-          </button>
-        )}
       </div>
-    </>
+
+      {/* Action */}
+      {!isSelf && (
+        <button
+          onClick={sendRequest}
+          disabled={loading}
+          className="
+            px-3 py-1.5 rounded-lg text-xs font-medium
+            bg-gradient-to-r from-cyan-500 to-blue-500
+            text-white
+            hover:shadow-[0_0_15px_rgba(34,211,238,0.4)]
+            active:scale-95
+            transition
+          "
+        >
+          {loading ? "..." : message ? message : "Add"}
+        </button>
+      )}
+
+      {isSelf && <span className="text-xs text-white/30">You</span>}
+    </div>
   );
 };

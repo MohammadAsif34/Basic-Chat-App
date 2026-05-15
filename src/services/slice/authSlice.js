@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-const token = localStorage.getItem("token");
+const token = sessionStorage.getItem("token");
 
 const initialState = {
   token: token || null,

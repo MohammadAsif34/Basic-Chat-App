@@ -17,6 +17,10 @@ import MobileLayout from "../../layout/MobileLayout";
 const HomePage = () => {
   const { token } = useAuth();
   const dispatch = useDispatch();
+  const isMobile = useResponsiveLayout();
+  const { currentChat } = useCurrentChat();
+  const { currentState } = useCurrentState();
+
   useEffect(() => {
     console.log("HomePage Loaded");
     const fetch = async () => {
@@ -28,12 +32,12 @@ const HomePage = () => {
     };
 
     const connectSocket = (token) => {
-      socket.auth = { token }; // if using JWT later
+      socket.auth = { token };
 
       socket.connect();
 
       socket.on("connect", () => {
-        console.log("web_socket_online");
+        console.log("Socket Connection Established:", socket.id);
       });
     };
 
@@ -43,23 +47,14 @@ const HomePage = () => {
     }
   }, []);
 
-  const { currentChat } = useCurrentChat();
-  const { currentState } = useCurrentState();
+  if (isMobile) return <MobileLayout />;
 
-  const isMobile = useResponsiveLayout();
   return (
-    <>
-      {isMobile ? (
-        <>
-          <MobileLayout />
-        </>
-      ) : (
-        <section className=" h-screen flex">
-          <SideSection />
-          {currentChat && currentState == "chat" ? <ChatSection /> : <NoChat />}
-        </section>
-      )}
-    </>
+    <section className="h-screen flex bg-slate-950">
+      <SideSection />
+
+      {currentChat && currentState === "chat" ? <ChatSection /> : <NoChat />}
+    </section>
   );
 };
 

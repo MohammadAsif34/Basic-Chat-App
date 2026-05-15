@@ -9,9 +9,7 @@ import { ChatHeader } from "./ChatHeader";
 import { ChatBody } from "./ChatBody";
 import { fetchedMessages } from "../../services/slice/currentChatSlice";
 import { userAPI } from "../../services/api/userAPI";
-import { setCurrentState } from "../../services/slice/currentStateSlice";
-import { ChatBG } from "../../components/ui/ChatBG";
-// import { fetchedMessages } from "./currentChatSlice";
+import { NoChat } from "../../components/ui/NoChat";
 
 const ChatSection = () => {
   const { currentChat } = useCurrentChat();
@@ -48,15 +46,20 @@ const ChatSection = () => {
 
   return (
     <section className="flex-1 h-screen relative  flex flex-col bg-slate-50 bg-blue-200">
-      {/* <ChatBG /> */}
-      {/* chat header  */}
-      <ChatHeader />
+      {currentChat ? (
+        <>
+          {/* chat header  */}
+          <ChatHeader />
 
-      {/* chat body  */}
-      <ChatBody />
+          {/* chat body  */}
+          <ChatBody />
 
-      {/* chat send section  */}
-      <ChatSender />
+          {/* chat send section  */}
+          <ChatSender />
+        </>
+      ) : (
+        <NoChat />
+      )}
     </section>
   );
 };
