@@ -6,7 +6,6 @@ const allowedOrigins = [
 ];
 export const corsOptions = {
   origin: (origin, callback) => {
-    console.log(process.env.CLIENT_URL);
     if (!origin || origin.includes("vercel.app")) return callback(null, true);
 
     // if (allowedOrigins.includes(origin)) return callback(null, true);

@@ -2,6 +2,7 @@ import express from "express";
 import { protect } from "../middleware/protected.middlewares.js";
 import {
   accept,
+  delete_chat,
   get_me,
   new_password,
   request,
@@ -19,5 +20,7 @@ router.post("/accept/:from", protect, accept); // done accept-sent
 router.get("/search", search); // done search-user
 router.post("/password", protect, new_password); // done new password
 router.put("/password", protect, update_password); //
+
+router.delete("/:chatId", protect, delete_chat);
 
 export default router;

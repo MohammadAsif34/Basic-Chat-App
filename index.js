@@ -17,20 +17,17 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
-const io = new Server(server, { cors: corsOptions });
+const io = new Server(server, {
+  cors: { origin: process.env.CLIENT_URL, credentials: true },
+});
 
 socketInitilize(io); // Socket Initilization
-// app.use(cors(corsOptions)); // Cors Integration
+app.use(cors({ origin: process.env.CLIENT_URL, credentials: true })); // Cors Integration
 app.use(express.json()); // Json Integration
 
-app.use(
-  cors({
-    origin: "https://mohammadasif34-chatapp.vercel.app",
-    credentials: true,
-  }),
-);
 // Database Initilization
 connectDB();
+
 // test route
 app.get("/", (req, res) => {
   console.log("SYSTEM_CHECK");

@@ -12,10 +12,6 @@ export const socketInitilize = (io) => {
       const list = Array.from(onlineUsers.keys());
 
       io.emit("online_users", list);
-      // console.log("user_online:", userId);
-      // onlineUsers.set(userId, socket.id);
-
-      // io.emit("online_users", Array.from(onlineUsers.keys()));
     });
 
     socket.on("join_chat", (chatId) => {
@@ -35,6 +31,18 @@ export const socketInitilize = (io) => {
       io.to(data.chatId).emit("message_received", savedMessage);
     });
 
+    // socket.on("send_friend_request", async (data) => {
+    //   const { senderId, receiverId } = data;
+
+    //   const receiverSocketId = onlineUsers.get(receiverId);
+
+    //   // send realtime update
+    //   if (receiverSocketId) {
+    //     io.to(receiverSocketId).emit("new_friend_request", {
+    //       senderId,
+    //     });
+    //   }
+    // });
     socket.on("disconnect", () => {
       for (let [userId, id] of onlineUsers.entries()) {
         if (id === socket.id) {

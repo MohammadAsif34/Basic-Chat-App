@@ -104,19 +104,22 @@ export const accept = async (req, res) => {
       participants: [user1._id, user2._id],
     });
 
+    const chatId = newChat._id;
     user1.requestReceive = user1.requestReceive.filter((id) => id == user2._id);
     user2.requestSent = user1.requestSent.filter((id) => id == user1._id);
-    // console.log(user1.requestReceive.filter((id) => id == user2._id));
-    // console.log(user1.requestSent.filter((id) => id == user1._id));
 
     await newChat.save();
     await user1.save();
     await user2.save();
+    const { _id, name, email, picture } = user2;
 
     console.log("\t=> accepted");
-    res
-      .status(200)
-      .json({ code: 200, success: true, message: "request accepted" });
+    res.status(200).json({
+      code: 200,
+      success: true,
+      message: "request accepted",
+      data: { _id, name, email, chatId },
+    });
   } catch (err) {
     res.status(500).json({ code: 500, success: false, message: err.message });
   }
@@ -236,6 +239,32 @@ export const update_password = async (req, res) => {
     res
       .status(200)
       .json({ code: 200, success: true, message: "password updated" });
+  } catch (err) {
+    res.status(500).json({ code: 500, success: false, message: err.message });
+  }
+};
+
+// delete chat
+export const delete_chat = async (req, res) => {
+  try {
+    const chatId = req.params.chatId;
+    console.log(chatId);
+
+    if (!chatId)
+      return res
+        .status(200)
+        .json({ code: 201, success: false, message: "invalid request" });
+
+    const chat = await Chat.findByIdAndDelete(chatId);
+
+    if (!chat) {
+      return res.status(404).json({
+        success: false,
+        message: "Chat not found",
+      });
+    }
+    console.log("\t=> chat deleted");
+    res.status(200).json({ code: 200, success: true, message: "Chat deleted" });
   } catch (err) {
     res.status(500).json({ code: 500, success: false, message: err.message });
   }
